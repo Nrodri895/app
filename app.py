@@ -13,7 +13,7 @@ st.write("Sube una imagen de una hoja afectada o usa la cámara para capturarla.
 
 @st.cache_resource
 def load_model():
-    url = "https://drive.google.com/uc?id=ID_DEL_ARCHIVO"  # Reemplaza con el ID de tu modelo
+    url = "https://drive.google.com/file/d/1mlL4yG-9pZWhTQi91ht7YB3sWGXc79Cr/view?usp=sharing"  
     output = "modelo_vgg16_citrus.h5"
     gdown.download(url, output, quiet=False)
     return tf.keras.models.load_model(output)
