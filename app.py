@@ -4,6 +4,7 @@ import numpy as np
 from PIL import Image
 import gdown
 import os
+import h5py
 
 # Configurar página
 st.set_page_config(page_title="Clasificación de Enfermedades en Hojas", page_icon="🌿", layout="centered")
@@ -12,17 +13,21 @@ st.set_page_config(page_title="Clasificación de Enfermedades en Hojas", page_ic
 st.title("🌱 Clasificación de Enfermedades en Hojas")
 st.write("Sube una imagen de una hoja afectada o usa la cámara para capturarla. El modelo te dirá la enfermedad detectada.")
 
+# Ruta del modelo
 modelo_path = "modelo_vgg16_citrus.h5"
-modelo_url = "https://drive.google.com/file/d/1mlL4yG-9pZWhTQi91ht7YB3sWGXc79Cr/view?usp=sharing" 
 
+# URL del modelo en Google Drive (reemplaza con el ID correcto)
+modelo_url = "https://drive.google.com/file/d/1mlL4yG-9pZWhTQi91ht7YB3sWGXc79Cr/view?usp=sharing"
+
+# Verificar si el modelo existe, si no, descargarlo
 if not os.path.exists(modelo_path):
-    st.write("📥 Descargando modelo, espera un momento...")
+    st.warning("🔄 Descargando el modelo... Esto puede tardar unos minutos.")
     gdown.download(modelo_url, modelo_path, quiet=False)
 
-# Cargar el modelo
+# Intentar cargar el modelo
 try:
     modelo = tf.keras.models.load_model(modelo_path)
-    st.write("✅ Modelo cargado correctamente")
+    st.success("✅ Modelo cargado correctamente.")
 except Exception as e:
     st.error(f"🚨 Error al cargar el modelo: {e}")
     st.stop()
@@ -51,7 +56,7 @@ def predecir_imagen(imagen_pil):
     prediccion = modelo.predict(imagen_array)
     clase_predicha = np.argmax(prediccion)  # Obtener la clase con mayor probabilidad
 
-    return clases[clase_predicha]  # Retornar el nombre en español
+    return clases.get(clase_predicha, "Clase desconocida")  # Retornar el nombre en español
 
 # Subida de imagen o captura con cámara
 opcion = st.radio("Selecciona una opción:", ("Subir una imagen", "Tomar foto con la cámara"))
