@@ -2,6 +2,7 @@ import streamlit as st
 import tensorflow as tf
 import numpy as np
 from PIL import Image
+import gdown
 
 # Configurar página
 st.set_page_config(page_title="Clasificación de Enfermedades en Hojas", page_icon="🌿", layout="centered")
@@ -10,10 +11,12 @@ st.set_page_config(page_title="Clasificación de Enfermedades en Hojas", page_ic
 st.title("🌱 Clasificación de Enfermedades en Hojas")
 st.write("Sube una imagen de una hoja afectada o usa la cámara para capturarla. El modelo te dirá la enfermedad detectada.")
 
-# Cargar modelo con caché para mejor rendimiento
 @st.cache_resource
 def load_model():
-    return tf.keras.models.load_model("modelo_vgg16_citrus.h5")
+    url = "https://drive.google.com/uc?id=ID_DEL_ARCHIVO"  # Reemplaza con el ID de tu modelo
+    output = "modelo_vgg16_citrus.h5"
+    gdown.download(url, output, quiet=False)
+    return tf.keras.models.load_model(output)
 
 modelo = load_model()
 
