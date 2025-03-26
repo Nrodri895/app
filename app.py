@@ -6,7 +6,7 @@ import streamlit as st
 from PIL import Image
 
 # 📌 URL del modelo en Google Drive (Reemplaza con tu ID correcto)
-URL_DRIVE = "https://drive.google.com/uc?id=1mlL4yG-9pZWhTQi91ht7YB3sWGXc79Cr"
+URL_DRIVE = "https://drive.google.com/uc?id=1ydcoy8oSuKDu_zL3kloj6fjHbZNHQtSr"
 NOMBRE_MODELO = "modelo_vgg16_citrus.h5"
 
 # 📌 Función para descargar el modelo si no está en el directorio
@@ -40,11 +40,24 @@ def predecir_imagen(imagen):
 # 📌 Interfaz en Streamlit
 st.title("🟢 Clasificación de Enfermedades en Hojas de Cítricos")
 
-subida = st.file_uploader("📤 Sube una imagen de una hoja", type=["jpg", "png", "jpeg"])
+# 📷 Opción para subir imagen o usar la cámara
+opcion = st.radio("📌 Selecciona una opción:", ["Subir imagen", "Usar cámara"])
 
-if subida:
-    imagen_pil = Image.open(subida)
-    st.image(imagen_pil, caption="Imagen subida", use_column_width=True)
+imagen_pil = None  # Variable para almacenar la imagen
+
+if opcion == "Subir imagen":
+    subida = st.file_uploader("📤 Sube una imagen de una hoja", type=["jpg", "png", "jpeg"])
+    if subida:
+        imagen_pil = Image.open(subida)
+
+elif opcion == "Usar cámara":
+    captura = st.camera_input("📸 Toma una foto")
+    if captura:
+        imagen_pil = Image.open(captura)
+
+# 📌 Si hay imagen, hacer predicción
+if imagen_pil:
+    st.image(imagen_pil, caption="📷 Imagen seleccionada", use_column_width=True)
 
     # 📌 Hacer predicción
     resultado, confianza = predecir_imagen(imagen_pil)
