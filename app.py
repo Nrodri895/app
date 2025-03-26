@@ -4,6 +4,7 @@ import numpy as np
 from PIL import Image
 import gdown
 import os
+import h5py
 
 # Configurar página
 st.set_page_config(page_title="Clasificación de Enfermedades en Hojas", page_icon="🌿", layout="centered")
@@ -12,26 +13,16 @@ st.set_page_config(page_title="Clasificación de Enfermedades en Hojas", page_ic
 st.title("🌱 Clasificación de Enfermedades en Hojas")
 st.write("Sube una imagen de una hoja afectada o usa la cámara para capturarla. El modelo te dirá la enfermedad detectada.")
 
-def load_model():
-    url = "https://drive.google.com/uc?id=1A2B3C4D5E6F7G8H"
-    output = "modelo_vgg16_citrus.h5"
 
-    # Verificar si el archivo ya existe
-    if not os.path.exists(output):
-        print("Descargando modelo...")
-        gdown.download(url, output, quiet=False)
+# Intentar abrir y reescribir el archivo
+with h5py.File("modelo_vgg16_citrus.h5", "r") as f:
+    with h5py.File("modelo_vgg16_citrus_fixed.h5", "w") as new_f:
+        for key in f.keys():
+            f.copy(key, new_f)
 
-    # Mostrar los archivos en el directorio actual
-    print("Archivos en el directorio:", os.listdir())
+# Cargar el modelo de la nueva versión
+modelo = tf.keras.models.load_model("modelo_vgg16_citrus_fixed.h5")
 
-    # Verificar si la descarga fue exitosa
-    if os.path.exists(output):
-        print(f"Archivo encontrado: {output}")
-        return tf.keras.models.load_model(output)
-    else:
-        raise FileNotFoundError(f"No se encontró el archivo {output}")
-
-modelo = load_model()
 
 # Diccionario de clases en español
 clases = {
