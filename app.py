@@ -16,12 +16,17 @@ def load_model():
     url = "https://drive.google.com/uc?id=1A2B3C4D5E6F7G8H"
     output = "modelo_vgg16_citrus.h5"
 
-
+    # Verificar si el archivo ya existe
     if not os.path.exists(output):
+        print("Descargando modelo...")
         gdown.download(url, output, quiet=False)
-    
+
+    # Mostrar los archivos en el directorio actual
+    print("Archivos en el directorio:", os.listdir())
+
     # Verificar si la descarga fue exitosa
     if os.path.exists(output):
+        print(f"Archivo encontrado: {output}")
         return tf.keras.models.load_model(output)
     else:
         raise FileNotFoundError(f"No se encontró el archivo {output}")
