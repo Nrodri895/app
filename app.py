@@ -4,34 +4,28 @@ import numpy as np
 from PIL import Image
 import gdown
 import os
-import h5py
 
-# Configurar página
+# Configurar la página
 st.set_page_config(page_title="Clasificación de Enfermedades en Hojas", page_icon="🌿", layout="centered")
 
-# Títulos y descripción
 st.title("🌱 Clasificación de Enfermedades en Hojas")
 st.write("Sube una imagen de una hoja afectada o usa la cámara para capturarla. El modelo te dirá la enfermedad detectada.")
 
-# Ruta del modelo
+# URL del modelo en Google Drive
+modelo_url = "https://drive.google.com/uc?id=1mlL4yG-9pZWhTQi91ht7YB3sWGXc79Cr"
 modelo_path = "modelo_vgg16_citrus.h5"
 
-# URL del modelo en Google Drive (reemplaza con el ID correcto)
-modelo_url = "https://drive.google.com/uc?id=1mlL4yG-9pZWhTQi91ht7YB3sWGXc79Cr"
-
-
-# Verificar si el modelo existe, si no, descargarlo
+# Verificar si el modelo ya está descargado
 if not os.path.exists(modelo_path):
-    st.warning("🔄 Descargando el modelo... Esto puede tardar unos minutos.")
+    st.info("Descargando el modelo, por favor espera...")
     gdown.download(modelo_url, modelo_path, quiet=False)
 
-# Intentar cargar el modelo
+# Cargar el modelo
 try:
     modelo = tf.keras.models.load_model(modelo_path)
-    st.success("✅ Modelo cargado correctamente.")
+    st.success("✅ Modelo cargado exitosamente.")
 except Exception as e:
-    st.error(f"🚨 Error al cargar el modelo: {e}")
-    st.stop()
+    st.error(f"🚨 Error al cargar el modelo: {str(e)}")
 
 # Diccionario de clases en español
 clases = {
@@ -57,7 +51,7 @@ def predecir_imagen(imagen_pil):
     prediccion = modelo.predict(imagen_array)
     clase_predicha = np.argmax(prediccion)  # Obtener la clase con mayor probabilidad
 
-    return clases.get(clase_predicha, "Clase desconocida")  # Retornar el nombre en español
+    return clases[clase_predicha]  # Retornar el nombre en español
 
 # Subida de imagen o captura con cámara
 opcion = st.radio("Selecciona una opción:", ("Subir una imagen", "Tomar foto con la cámara"))
@@ -77,16 +71,3 @@ elif opcion == "Tomar foto con la cámara":
         st.image(imagen_pil, caption="Imagen capturada", use_container_width=True)
         resultado = predecir_imagen(imagen_pil)
         st.success(f"🔍 **Resultado:** {resultado}")
-
-# Estilo mejorado
-st.markdown(
-    """
-    <style>
-        .stApp { background-color: #e8f5e9; }
-        .stButton>button { background-color: #4caf50; color: white; font-size: 18px; border-radius: 10px; }
-        .stRadio>div { display: flex; justify-content: center; }
-    </style>
-    """,
-    unsafe_allow_html=True
-)
-
