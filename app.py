@@ -11,12 +11,19 @@ st.set_page_config(page_title="Clasificación de Enfermedades en Hojas", page_ic
 st.title("🌱 Clasificación de Enfermedades en Hojas")
 st.write("Sube una imagen de una hoja afectada o usa la cámara para capturarla. El modelo te dirá la enfermedad detectada.")
 
-@st.cache_resource
 def load_model():
-    url = "https://drive.google.com/file/d/1mlL4yG-9pZWhTQi91ht7YB3sWGXc79Cr/view?usp=sharing"  
+    url = "https://drive.google.com/uc?id=1A2B3C4D5E6F7G8H"
     output = "modelo_vgg16_citrus.h5"
-    gdown.download(url, output, quiet=False)
-    return tf.keras.models.load_model(output)
+
+
+    if not os.path.exists(output):
+        gdown.download(url, output, quiet=False)
+    
+    # Verificar si la descarga fue exitosa
+    if os.path.exists(output):
+        return tf.keras.models.load_model(output)
+    else:
+        raise FileNotFoundError(f"No se encontró el archivo {output}")
 
 modelo = load_model()
 
