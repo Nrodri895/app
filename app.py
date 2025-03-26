@@ -5,11 +5,11 @@ import numpy as np
 import streamlit as st
 from PIL import Image
 
-# 📌 URL del modelo en Google Drive (Reemplaza con tu ID correcto)
+
 URL_DRIVE = "https://drive.google.com/uc?id=1ydcoy8oSuKDu_zL3kloj6fjHbZNHQtSr"
 NOMBRE_MODELO = "modelo_vgg16_citrus.h5"
 
-# 📌 Función para descargar el modelo si no está en el directorio
+
 def descargar_modelo():
     if not os.path.exists(NOMBRE_MODELO):
         st.info("Descargando modelo desde Google Drive...")
@@ -17,16 +17,16 @@ def descargar_modelo():
     else:
         st.success("Modelo ya descargado.")
 
-# 📌 Cargar el modelo con caché en Streamlit
+#  Cargar el modelo con caché en Streamlit
 @st.cache_resource
 def load_model():
     descargar_modelo()
     return tf.keras.models.load_model(NOMBRE_MODELO)
 
-# 📌 Inicializar modelo
+#  Inicializar modelo
 modelo = load_model()
 
-# 📌 Función de predicción
+# Función de predicción
 def predecir_imagen(imagen):
     imagen = imagen.resize((224, 224))  # Ajustar tamaño a VGG16
     imagen_array = np.array(imagen) / 255.0  # Normalizar
@@ -37,11 +37,11 @@ def predecir_imagen(imagen):
     indice_predicho = np.argmax(prediccion)
     return clases[indice_predicho], prediccion[0][indice_predicho]
 
-# 📌 Interfaz en Streamlit
+#  Interfaz en Streamlit
 st.title("🟢 Clasificación de Enfermedades en Hojas de Cítricos")
 
 # 📷 Opción para subir imagen o usar la cámara
-opcion = st.radio("📌 Selecciona una opción:", ["Subir imagen", "Usar cámara"])
+opcion = st.radio(" Selecciona una opción:", ["Subir imagen", "Usar cámara"])
 
 imagen_pil = None  # Variable para almacenar la imagen
 
@@ -55,14 +55,14 @@ elif opcion == "Usar cámara":
     if captura:
         imagen_pil = Image.open(captura)
 
-# 📌 Si hay imagen, hacer predicción
+#  Si hay imagen, hacer predicción
 if imagen_pil:
     st.image(imagen_pil, caption="📷 Imagen seleccionada", use_column_width=True)
 
-    # 📌 Hacer predicción
+    #  Hacer predicción
     resultado, confianza = predecir_imagen(imagen_pil)
 
-    # 📌 Mostrar resultado
+    #  Mostrar resultado
     st.subheader(f"🔍 Predicción: {resultado}")
     st.write(f"📊 Confianza: {confianza:.2%}")
 
