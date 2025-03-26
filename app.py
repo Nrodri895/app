@@ -17,7 +17,8 @@ st.write("Sube una imagen de una hoja afectada o usa la cámara para capturarla.
 modelo_path = "modelo_vgg16_citrus.h5"
 
 # URL del modelo en Google Drive (reemplaza con el ID correcto)
-modelo_url = "https://drive.google.com/file/d/1mlL4yG-9pZWhTQi91ht7YB3sWGXc79Cr/view?usp=sharing"
+modelo_url = "https://drive.google.com/uc?id=1mlL4yG-9pZWhTQi91ht7YB3sWGXc79Cr"
+
 
 # Verificar si el modelo existe, si no, descargarlo
 if not os.path.exists(modelo_path):
