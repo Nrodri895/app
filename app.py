@@ -4,7 +4,6 @@ import numpy as np
 from PIL import Image
 import gdown
 import os
-import h5py
 
 # Configurar página
 st.set_page_config(page_title="Clasificación de Enfermedades en Hojas", page_icon="🌿", layout="centered")
@@ -13,16 +12,20 @@ st.set_page_config(page_title="Clasificación de Enfermedades en Hojas", page_ic
 st.title("🌱 Clasificación de Enfermedades en Hojas")
 st.write("Sube una imagen de una hoja afectada o usa la cámara para capturarla. El modelo te dirá la enfermedad detectada.")
 
+modelo_path = "modelo_vgg16_citrus.h5"
+modelo_url = "https://drive.google.com/file/d/1mlL4yG-9pZWhTQi91ht7YB3sWGXc79Cr/view?usp=sharing" 
 
-# Intentar abrir y reescribir el archivo
-with h5py.File("modelo_vgg16_citrus.h5", "r") as f:
-    with h5py.File("modelo_vgg16_citrus_fixed.h5", "w") as new_f:
-        for key in f.keys():
-            f.copy(key, new_f)
+if not os.path.exists(modelo_path):
+    st.write("📥 Descargando modelo, espera un momento...")
+    gdown.download(modelo_url, modelo_path, quiet=False)
 
-# Cargar el modelo de la nueva versión
-modelo = tf.keras.models.load_model("modelo_vgg16_citrus_fixed.h5")
-
+# Cargar el modelo
+try:
+    modelo = tf.keras.models.load_model(modelo_path)
+    st.write("✅ Modelo cargado correctamente")
+except Exception as e:
+    st.error(f"🚨 Error al cargar el modelo: {e}")
+    st.stop()
 
 # Diccionario de clases en español
 clases = {
@@ -43,9 +46,6 @@ def predecir_imagen(imagen_pil):
 
     # Agregar dimensión batch (1, 224, 224, 3)
     imagen_array = np.expand_dims(imagen_array, axis=0)
-
-    # Verificar forma de imagen antes de pasarla al modelo
-    st.write(f"Forma de la imagen de entrada: {imagen_array.shape}")
 
     # Realizar predicción
     prediccion = modelo.predict(imagen_array)
