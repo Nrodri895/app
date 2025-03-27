@@ -57,7 +57,7 @@ elif opcion == "Usar cámara":
 
 #  Si hay imagen, hacer predicción
 if imagen_pil:
-    st.image(imagen_pil, caption="📷 Imagen seleccionada", use_column_width=True)
+    st.image(imagen_pil, caption="📷 Imagen seleccionada", use_container_width=True)
 
     #  Hacer predicción
     resultado, confianza = predecir_imagen(imagen_pil)
